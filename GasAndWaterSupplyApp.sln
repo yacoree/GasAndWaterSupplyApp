@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GasAndWaterSupplyApp", "GasAndWaterSupplyApp\GasAndWaterSupplyApp.csproj", "{AA34E1F3-7086-4488-9B68-3A0F396781FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA34E1F3-7086-4488-9B68-3A0F396781FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA34E1F3-7086-4488-9B68-3A0F396781FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA34E1F3-7086-4488-9B68-3A0F396781FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA34E1F3-7086-4488-9B68-3A0F396781FD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4435F5D2-1BF7-45F4-9E29-B595D3523CCA}
+	EndGlobalSection
+EndGlobal
