@@ -60,13 +60,14 @@ namespace GasAndWaterSupplyApp.Data
             return documentTypeCollection.Find(x => x.Industry == industries).ToList();
         }
 
-        public static GridFSFileInfo FindFile(string id)
-        {
-            //var filter = Builders<GridFSFileInfo>.Filter.Eq(info => info.Id, new ObjectId(id));
-            //var fileInfos = fileGridFSBucket.Find(filter);
-            //var fileInfo = fileInfos.FirstOrDefault();
-            //return fileInfo;
-        }
+        //public static GridFSFileInfo FindFile(string id)
+        //{
+        //    fileGridFSBucket.DownloadToStream(new ObjectId(id));
+        //    var filter = Builders<GridFSFileInfo>.Filter.Eq(info => info.Id, new ObjectId(id));
+        //    var fileInfos = fileGridFSBucket.Find(filter);
+        //    var fileInfo = fileInfos.FirstOrDefault();
+        //    return fileInfo;
+        //}
         //public static List<Document> FindDocuments(User user)
         //{
         //    return documentCollection.Find(x => x.Cust).ToList();

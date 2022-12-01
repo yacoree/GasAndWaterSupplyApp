@@ -66,9 +66,20 @@
                 if (password == repeatPassword)
                 {
                     User user = new User(login, password, email, telephone);
+                    switch(role)
+                    {
+                        case Roles.Customer:
+                            user = new Customer(user);
+                            break;
+                        case Roles.Developer:
+                            user = new Developer(user);
+                            break;
+                        case Roles.Designer: 
+                            user = new Designer(user);
+                            break;
+                    }
                     UsersDB.AddUserToDataBase(user);
                     singletonUserService.SetUser(user);
-                    singletonUserService.SetRole(role);
                     NavigationManager.NavigateTo("profile");
                     return;
                 }

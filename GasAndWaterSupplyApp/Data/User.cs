@@ -40,5 +40,11 @@ namespace GasAndWaterSupplyApp.Data
             Email = email;
             Telephone = telephone;
         }
+
+        public virtual bool AllFieldsAreFilled()
+        {
+            return false;
+        }
+
     }
 }

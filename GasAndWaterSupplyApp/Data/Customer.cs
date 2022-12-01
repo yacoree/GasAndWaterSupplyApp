@@ -24,5 +24,15 @@
             Patronymic = patronymic;
             Department = department;
         }
+
+        public Customer(User user) : base(user.Login, user.Password, user.Email, user.Telephone)
+        {
+            Department = Industries.WaterSupply;
+        }
+
+        public override bool AllFieldsAreFilled()
+        {
+            return (Patronymic != String.Empty && LName != String.Empty && FName != String.Empty);
+        }
     }
 }

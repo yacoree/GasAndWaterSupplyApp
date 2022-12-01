@@ -20,7 +20,7 @@
             }
         }
 
-        @if (singletonUserService.GetRole() == Roles.Customer)
+        @if (UserMaker.dictionary[singletonUserService.GetUser().GetType().Name] == Roles.Customer)
         {
             foreach (var i in Enum.GetValues(typeof(Industries)))
             {
@@ -62,7 +62,7 @@
         else 
         {
             User newUser;
-            switch (singletonUserService.GetRole())
+            switch (UserMaker.dictionary[singletonUserService.GetUser().GetType().Name])
             {
                 case Roles.Customer:
                     newUser = new Customer(stringFieldValues["Login"], stringFieldValues["Password"], stringFieldValues["Email"], stringFieldValues["Telephone"],
@@ -89,14 +89,14 @@
 
     private void LogOut()
     {
-        singletonUserService.SetUser(new User());
         NavigationManager.NavigateTo("authorization");
+        singletonUserService.SetUser(new User());
+        
     }
 
     protected override async Task OnInitializedAsync()
     {
-        var role = singletonUserService.GetUser().GetType().Name;
-        switch (UserMaker.dictionary[role])
+        switch (UserMaker.dictionary[singletonUserService.GetUser().GetType().Name])
         {
             case Roles.Customer:
                 fields = typeof(Customer).GetProperties();
@@ -114,7 +114,7 @@
         Array.Reverse(fields);
         defaulFields = typeof(User).GetProperties().Select(field => field.Name).ToList();
         currentUser = singletonUserService.GetUser();
-        var defaulFieldsValues = currentUser.GetType().GetProperties()
+        var defaulFieldsValues = singletonUserService.GetUser().GetType().GetProperties()
                         .ToDictionary(x => x.Name, x => x.GetValue(currentUser));
         stringFieldValues = new Dictionary<string, string>();
 
@@ -132,7 +132,7 @@
             {
                 if (i.Key == j.Key) 
                 {
-                    stringFieldValues[j.Key] = i.Value.ToString();
+                    stringFieldValues[j.Key] = (i.Value == null ? string.Empty : i.Value.ToString());
                     break;
                 }
             }

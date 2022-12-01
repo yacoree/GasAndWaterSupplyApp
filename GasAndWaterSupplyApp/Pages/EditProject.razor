@@ -40,9 +40,10 @@
             @foreach (var i in singletonUserService.GetProject().Documents)
             {
                 <tr>
-                    <td>@i.Type.Title</td>
+                    <td>@i.Type.Title</td>@*
                     <td>@DocumentDB.FindFile(i.FileId)</td>
-                    <td><a href='file/{@DocumentDB.FindFile(i.FileId)}'>@i.FileId</a></td>
+                    <td><a href='file/{@DocumentDB.FindFile(i.FileId)}'>@i.FileId</a></td>*@
+                    <td>@i.FileId</td>
                     <td><button></button></td>
                     <td><button></button></td>
                 </tr>

@@ -31,5 +31,13 @@
             INN = iNN;
             KPP = kPP;
         }
+
+        public Designer(User user) : base(user.Login, user.Password, user.Email, user.Telephone) { }
+
+        public override bool AllFieldsAreFilled()
+        {
+            return (Name != String.Empty && KPP != String.Empty && INN != String.Empty && 
+                OGRN != String.Empty && Director != String.Empty && ChiefProjectEngineer != String.Empty);
+        }
     }
 }

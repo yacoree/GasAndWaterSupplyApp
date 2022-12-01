@@ -5,32 +5,40 @@
 @inject SingletonUserService singletonUserService
 
 <h3>Projects</h3>
-@if (currentUser is Customer)
+@if (singletonUserService.GetUser().AllFieldsAreFilled())
 {
-    <form>
-        <lable>Create new project</lable><br>
-        <input type="text" @bind-value="@newProjectName">
-        <button class="btn btn-primary" @onclick="CreateNewProject">Create</button>
-    </form>
+    @if (currentUser is Customer)
+    {
+        <form>
+            <lable>Create new project</lable><br>
+            <input type="text" @bind-value="@newProjectName">
+            <button class="btn btn-primary" @onclick="CreateNewProject">Create</button>
+        </form>
+    }
+
+    @foreach (var i in UserProjects)
+    {
+        <div @onclick="@(() => SelectProject(i))">
+            <h4>@i.Name</h4>
+            <h5>Customer: @i.Customer.FName @i.Customer.LName</h5>
+            <h5> Designer: </h5>
+            @if (i.Designer != null) 
+            {
+                <h5> { i.Designer.Name; }</h5>
+            }
+            <h5> Developer: </h5>
+            @if (i.Developer != null)
+            {
+                <h5> { i.Developer.Name; }</h5>
+            }
+        </div>
+    }
+}
+else
+{
+    <label class="alert-danger">You must fill in all fields</label>
 }
 
-@foreach (var i in UserProjects)
-{
-    <div @onclick="@(() => SelectProject(i))">
-        <h4>@i.Name</h4>
-        <h5>Customer: @i.Customer.FName @i.Customer.LName</h5>
-        <h5> Designer: </h5>
-        @if (i.Designer != null) 
-        {
-            <h5> { i.Designer.Name; }</h5>
-        }
-        <h5> Developer: </h5>
-        @if (i.Developer != null)
-        {
-            <h5> { i.Developer.Name; }</h5>
-        }
-    </div>
-}
 
 
 @code {
