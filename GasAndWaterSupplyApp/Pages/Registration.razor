@@ -1,0 +1,93 @@
+﻿@page "/registration"
+@using GasAndWaterSupplyApp.Data
+@inject NavigationManager NavigationManager
+@inject SingletonUserService singletonUserService
+
+<h3>Registration</h3>
+<div>
+    <label>@error</label>
+    <form>
+        <label>Login</label><br />
+        <input type="text" @bind-value="@login"><br>
+
+        <label>Email</label><br />
+        <input type="email" @bind-value="@email"><br>
+
+        <label>Telephone</label><br>
+        <input type="tel" @bind-value="@telephone"><br>@*pattern="2[0-9]{3}-[0-9]{3}"*@
+
+        <label>Password</label><br>
+        <input type="password" @bind-value="@password"><br>
+
+        <label>Repeat password</label><br>
+        <input type="password" name="RepeatPassword" @bind-value="@repeatPassword"><br>
+
+        <label>Choose your role</label><br>
+        <select @bind="role">
+            @foreach (var i in (Enum.GetValues(typeof(Roles))))
+            {
+                <option value="@((Roles)i)">@i</option>
+            }
+        </select>
+        @*@foreach (var i in (Enum.GetValues(typeof(Roles))))
+        {
+            <input class="form-check-input" type="radio" name="role" @onchange="@(() => UpdateRole((Roles)i))" checked="checked">
+            <b style="margin-right: 25px;">@i</b>
+        }*@
+    </form><br>
+</div>
+<button class="btn btn-primary" @onclick="RegistrationClick">Sign up</button>
+<button class="btn btn-primary" @onclick="AuthrizationClick">Sign in</button>
+
+@code {
+    private string login = string.Empty;
+    private string email = string.Empty;
+    private string telephone = string.Empty;
+    private string password = string.Empty;
+    private string repeatPassword = string.Empty;
+    private string error = string.Empty;
+    private Roles role;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private void RegistrationClick()
+    {
+        string field = string.Empty;
+        if (login != string.Empty && email != string.Empty && telephone != string.Empty && password != string.Empty && repeatPassword != string.Empty)
+        {
+            if (UsersDB.FindUserByLogin(login) != null) field = login;
+            else if (UsersDB.FindUserByTelephone(telephone) != null) field = telephone;
+            else if (UsersDB.FindUserByEmail(email) != null) field = email;
+            else
+            {
+                if (password == repeatPassword)
+                {
+                    User user = new User(login, password, email, telephone);
+                    UsersDB.AddUserToDataBase(user);
+                    singletonUserService.SetUser(user);
+                    singletonUserService.SetRole(role);
+                    NavigationManager.NavigateTo("profile");
+                    return;
+                }
+                error = "passwords don't match";
+                return;
+            }
+            error = $"This {field} already used";
+            return;
+        }
+        error = "ERROR";
+    }
+
+    private void AuthrizationClick()
+    {
+        NavigationManager.NavigateTo("authorization");
+    }
+
+    public void UpdateRole(Roles role)
+    {
+        this.role = role;
+    }
+}

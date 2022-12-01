@@ -1,0 +1,139 @@
+﻿@page "/edit_project"
+@using GasAndWaterSupplyApp.Data
+@using System.Reflection
+@using MongoDB.Bson;
+@inject NavigationManager NavigationManager
+@inject SingletonUserService singletonUserService
+
+
+<h3>EditProject</h3>
+<lable>@error</lable>
+@if (currentUser is Customer)
+{
+    <label>Designer</label>
+    <select @bind="@des">
+        @foreach(var i in UsersDB.FindAllDesigner())
+        {
+            <option value="@i.Login">@((i as Designer).Name)</option>
+        }
+    </select><br />
+    <label>Developer</label>
+    <select @bind="@dev">
+        @foreach (var i in UsersDB.FindAllDeveloper())
+        {
+            <option value="@i.Login">@((i as Developer).Name)</option>
+        }
+    </select>
+
+    <button class="btn btn-primary" @onclick="RegistrationClick">Sign up</button>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>File</th>
+                <th>Approved</th>
+                <th>NEApproved</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in singletonUserService.GetProject().Documents)
+            {
+                <tr>
+                    <td>@i.Type.Title</td>
+                    <td>@DocumentDB.FindFile(i.FileId)</td>
+                    <td><a href='file/{@DocumentDB.FindFile(i.FileId)}'>@i.FileId</a></td>
+                    <td><button></button></td>
+                    <td><button></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>File</th>
+                <th>Approved</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in singletonUserService.GetProject().Documents)
+            {
+                if (i.Type.Role == UserMaker.dictionary[singletonUserService.GetUser().GetType().Name])
+                {
+                    <tr>
+                        <td>@i.Type.Title</td>
+                        <td>
+                            <InputFile OnChange="@LoadFiles"/>
+                            @*<input type="file" @bind-value="@file">*@
+                        </td>
+                        <button class="btn btn-primary" @onclick="@(() => SaveDocument(i))">Send</button>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @file
+}
+
+@code {
+    private User currentUser;
+    private string file = string.Empty;
+    private string dev;
+    private string des;
+    private string error;
+    private ObjectId fileId;
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            if (file != string.Empty)
+            {
+                error = "Save lasd document";
+                return;
+            }
+            file = e.File.Name;
+            var path = Path.GetFullPath($"wwwroot\\Fiels\\{file}");
+            using (FileStream fs = new(path, FileMode.Create))
+            {
+                await e.File.OpenReadStream(1000000000).CopyToAsync(fs);
+            }
+            fileId = DocumentDB.AddFileToDataBase(path, file);
+            //file = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            error = $"{ex.Message}";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = singletonUserService.GetUser();
+    }
+    private void RegistrationClick()
+    {
+        var pp = singletonUserService.GetProject();
+        User deigner = UsersDB.FindUserByLogin(des);
+        User developer = UsersDB.FindUserByLogin(dev);
+        if (deigner != null) pp.Designer = (Designer)deigner;
+        if (developer != null) pp.Developer = (Developer)developer;
+        ProjectDB.ReplaceProject(pp.Name, pp);
+        singletonUserService.SetProject(pp);
+
+    }
+
+    private void SaveDocument(Document document)
+    {
+        document.FileId = fileId.ToString();
+        DocumentDB.AddDocumentToDataBase(document);
+        ProjectDB.ReplaceProject(singletonUserService.GetProject().Name, singletonUserService.GetProject());
+        file = string.Empty;
+
+    }
+}

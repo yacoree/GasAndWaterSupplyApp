@@ -1,0 +1,58 @@
+﻿@page "/projects"
+@using GasAndWaterSupplyApp.Data
+@using System.Reflection
+@inject NavigationManager NavigationManager
+@inject SingletonUserService singletonUserService
+
+<h3>Projects</h3>
+@if (currentUser is Customer)
+{
+    <form>
+        <lable>Create new project</lable><br>
+        <input type="text" @bind-value="@newProjectName">
+        <button class="btn btn-primary" @onclick="CreateNewProject">Create</button>
+    </form>
+}
+
+@foreach (var i in UserProjects)
+{
+    <div @onclick="@(() => SelectProject(i))">
+        <h4>@i.Name</h4>
+        <h5>Customer: @i.Customer.FName @i.Customer.LName</h5>
+        <h5> Designer: </h5>
+        @if (i.Designer != null) 
+        {
+            <h5> { i.Designer.Name; }</h5>
+        }
+        <h5> Developer: </h5>
+        @if (i.Developer != null)
+        {
+            <h5> { i.Developer.Name; }</h5>
+        }
+    </div>
+}
+
+
+@code {
+    private List<Project> UserProjects;
+    private User currentUser;
+    private string newProjectName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = singletonUserService.GetUser();
+        UserProjects = ProjectDB.FindAllProjectsByUser(currentUser);
+    }
+
+    private void SelectProject(Project project)
+    {
+        singletonUserService.SetProject(project);
+        NavigationManager.NavigateTo("edit_project");
+    }
+
+    private void CreateNewProject()
+    {
+        var newProject = new Project(((Customer) currentUser), newProjectName);
+        ProjectDB.AddProjectToDataBase(newProject);
+    }
+}

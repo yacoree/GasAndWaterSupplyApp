@@ -1,0 +1,147 @@
+﻿@page "/profile"
+@using GasAndWaterSupplyApp.Data
+@using System.Reflection
+@inject NavigationManager NavigationManager
+@inject SingletonUserService singletonUserService
+
+<h3>Profile</h3>
+
+<div>
+    @*<label>@error</label>*@
+    <form>
+        @foreach (var i in fields)
+        {
+            if (i.PropertyType == typeof(string) || i.PropertyType == typeof(int))
+            {
+                <label>@i.Name</label><br />
+                <input type="text" @bind-value="@stringFieldValues[i.Name]">
+                @*@bind-value = "@fieldValues[@i.Name]"*@
+                <br>
+            }
+        }
+
+        @if (singletonUserService.GetRole() == Roles.Customer)
+        {
+            foreach (var i in Enum.GetValues(typeof(Industries)))
+            {
+                <input class="form-check-input" type="radio" name="role" @onchange="@(() => UpdateIndustries((Industries)i))" checked="checked">
+                <b style="margin-right: 25px;">@i</b>
+            }
+        }
+
+
+    </form><br>
+    <button class="btn btn-primary" @onclick="SaveChanges">Save changes</button>
+    <button class="btn btn-primary" @onclick="LogOut">Log out</button>
+</div>
+            
+
+@code {
+    private User currentUser;
+    private PropertyInfo[] fields;
+    private List<string> defaulFields;
+    private string error = string.Empty;
+    private Dictionary<string, string> stringFieldValues;
+    private Dictionary<string, Enum> enumFieldValues;
+    private Industries customerIndustry;
+
+    private void SaveChanges()
+    {
+        string field = string.Empty;
+        foreach (var i in stringFieldValues)
+        {
+            if (i.Value == string.Empty) 
+            {
+                error = $"All fields ";
+                return;
+            }
+        }
+        if (stringFieldValues["Login"] != currentUser.Login && UsersDB.FindUserByLogin(stringFieldValues["Login"]) != null) field = "Login";
+        else if (stringFieldValues["Telephone"] != currentUser.Login && UsersDB.FindUserByLogin(stringFieldValues["Telephone"]) != null) field = "Telephone";
+        else if (stringFieldValues["Email"] != currentUser.Login && UsersDB.FindUserByLogin(stringFieldValues["Email"]) != null) field = "Email";
+        else 
+        {
+            User newUser;
+            switch (singletonUserService.GetRole())
+            {
+                case Roles.Customer:
+                    newUser = new Customer(stringFieldValues["Login"], stringFieldValues["Password"], stringFieldValues["Email"], stringFieldValues["Telephone"],
+                    stringFieldValues["FName"], stringFieldValues["FName"], stringFieldValues["FName"], customerIndustry);
+                    break;
+                case Roles.Developer:
+                    newUser = new Developer(stringFieldValues["Login"], stringFieldValues["Password"], stringFieldValues["Email"], stringFieldValues["Telephone"],
+                    stringFieldValues["Name"], stringFieldValues["HeadOfExecutiveCommitteeOfRT"], stringFieldValues["Adress"],
+                    stringFieldValues["OGRN"], stringFieldValues["INN"], stringFieldValues["KPP"]);
+                    break;
+                case Roles.Designer:
+                    newUser = new Developer(stringFieldValues["Login"], stringFieldValues["Password"], stringFieldValues["Email"], stringFieldValues["Telephone"],
+                    stringFieldValues["Name"], stringFieldValues["ChiefProjectEngineer"], stringFieldValues["Director"],
+                    stringFieldValues["OGRN"], stringFieldValues["INN"], stringFieldValues["KPP"]);
+                    break;
+                default:
+                    newUser = currentUser;
+                    break;
+            }
+            UsersDB.ReplaceUser(currentUser.Login, newUser);
+            singletonUserService.SetUser(newUser);
+        }
+    }
+
+    private void LogOut()
+    {
+        singletonUserService.SetUser(new User());
+        NavigationManager.NavigateTo("authorization");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var role = singletonUserService.GetUser().GetType().Name;
+        switch (UserMaker.dictionary[role])
+        {
+            case Roles.Customer:
+                fields = typeof(Customer).GetProperties();
+                break;
+            case Roles.Developer:
+                fields = typeof(Developer).GetProperties();
+                break;
+            case Roles.Designer: 
+                fields = typeof(Designer).GetProperties();
+                break;
+            default:
+                fields = typeof(User).GetProperties();
+                break;
+        }
+        Array.Reverse(fields);
+        defaulFields = typeof(User).GetProperties().Select(field => field.Name).ToList();
+        currentUser = singletonUserService.GetUser();
+        var defaulFieldsValues = currentUser.GetType().GetProperties()
+                        .ToDictionary(x => x.Name, x => x.GetValue(currentUser));
+        stringFieldValues = new Dictionary<string, string>();
+
+        foreach (var i in fields)
+        {
+            if (i.PropertyType == typeof(string))
+            {
+                stringFieldValues.Add(i.Name, string.Empty);
+            }
+        }
+
+        foreach (var i in defaulFieldsValues)
+        {
+            foreach (var j in stringFieldValues)
+            {
+                if (i.Key == j.Key) 
+                {
+                    stringFieldValues[j.Key] = i.Value.ToString();
+                    break;
+                }
+            }
+        }
+    }
+
+    private void UpdateIndustries(Industries industries)
+    {
+        this.customerIndustry = industries;
+    }
+    }
+            

@@ -1,0 +1,48 @@
+﻿@page "/authorization"
+
+@using GasAndWaterSupplyApp.Data
+@inject NavigationManager NavigationManager
+@inject SingletonUserService singletonUserService
+
+<h3>Authorization</h3>
+<label>@text</label>
+<form>
+    <label>Login or email address</label><br />
+    <input type="text" name="Login" @bind-value="@login"><br>
+    <label>Password</label><br>
+    <input type="password" name="Password" @bind-value="@password"><br>
+</form>
+
+<br>
+<button class="btn btn-primary" @onclick="AuthorizationClick">Sign in</button>
+<button class="btn btn-primary" @onclick="RegistrationClick">Sign up</button>
+@code {
+    private string login = "";
+    private string password = "";
+    private string text = "";
+
+    private void AuthorizationClick()
+    {
+        if (login != "" && password != "")
+        {
+            User currentUser;
+            var user = UsersDB.FindUserByLogin(login);
+            currentUser = user != null ? user : UsersDB.FindUserByEmail(login);
+            if (currentUser != null)
+            {
+                if (password == currentUser.Password)
+                {
+                    singletonUserService.SetUser(currentUser);
+                    NavigationManager.NavigateTo("profile");
+                    return;
+                }
+            }
+        }
+        text = "Incorrect password or login";
+    }
+
+    private void RegistrationClick()
+    {
+        NavigationManager.NavigateTo("registration");
+    }
+}

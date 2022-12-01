@@ -1,20 +1,23 @@
 ﻿namespace GasAndWaterSupplyApp.Data
 {
-    public enum Industries
-    {
-        WaterSupply,
-        GasSupply
-    }
-
     public class Customer : User
     {
-        string FName { get; set; }
-        string LName { get; set; }
-        string Patronymic { get; set; }
-        Industries Department { get; set; }
-
+        public Industries Department { get; set; }
+        public string Patronymic { get; set; }
+        public string LName { get; set; }
+        public string FName { get; set; }
+        
         public Customer(string login, string password, string email, string telephone, string fName, string lName, string patronymic, Industries department) :
             base(login, password, email, telephone)
+        {
+            FName = fName;
+            LName = lName;
+            Patronymic = patronymic;
+            Department = department;
+        }
+
+        public Customer(string fName, string lName, string patronymic, Industries department, User user) :
+            base(user.Login, user.Password, user.Email, user.Telephone)
         {
             FName = fName;
             LName = lName;

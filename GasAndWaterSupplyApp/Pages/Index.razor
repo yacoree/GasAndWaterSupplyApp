@@ -1,10 +1,100 @@
 ﻿@page "/"
+@using GasAndWaterSupplyApp.Data
+@using System.Globalization;
+<a href="registration">Sign up</a>
+<a href="authorization">Sign in</a>
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+@code
+{
+    //private void AddDataDocumentTypes()
+    //{
+    //    DocumentType documentType = new DocumentType("Акт обследования и выбора трассы сети водоснабжения", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
 
-Welcome to your new app.
+    //    documentType = new DocumentType("Акт обследования и выбор места под проектируемую скважину", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    //    documentType = new DocumentType("Согласованный ситуационный план (М1:10000 или М1: 25000) с нанесением источников воды(скважин, родников и т.п.), существующих водонапорных башен, предполагаемой трассой водопровода и места врезки в существующую сеть. ", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
 
+    //        documentType = new DocumentType("План населённого пункта в М 1:1000 или М 1:500 топографическая съемка)", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("технические условия на водоснабжение", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //        documentType = new DocumentType("Технические условия на электроснабжение (для насосной станции первого или второго подъема)", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Градостроительный план земельного участка", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //        documentType = new DocumentType("Справка согласования с собственниками земельных участков", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //        documentType = new DocumentType("документ, подтверждающий проведение межевания с присвоением кадастрового номера земельного участка под строительство водопровода и сооружений на нем.", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //        documentType = new DocumentType("заключение Органа Роспотребнадзора санитарно - эпидемиологической службы по отводу земельного участка и результат радиационного обследования.", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //        documentType = new DocumentType("Сведения о наличие водозаборных скважин (родников) на территории хозяйства. ", Industries.WaterSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+
+    //        documentType = new DocumentType("Письмо-обращение на имя Президента, Премьер - Министра, Минстрой РТ", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Задание на проектирование", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Ситуационный план (утвержденный исполкомом)", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Технические условия на присоединение кгазораспределительной сети (№, дата,срок действий Технических условий)", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Технический паспорт (план БТИ) объекта СКБ", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Технический паспорт (план БТИ) существующей котельной", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("АКТ обследования объекта", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //        documentType = new DocumentType("Технические условия на сети электроснабжение, водоснабжения, водоотведения при установке БМК", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Согласование посадки котельной ", Industries.GasSupply, Roles.Developer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+
+
+    //    documentType = new DocumentType("Диаметр (мм) трубопровода и протяженностьлинейного объекта (м)", Industries.WaterSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Производительность БОС, м3/сут", Industries.WaterSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("кол.-во (шт) и производительность КНС (м3/ч)", Industries.WaterSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Сметная стоимость работ, тыс. руб.", Industries.WaterSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Срок разработки проектной документации, месяцев", Industries.WaterSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+
+    //    documentType = new DocumentType("Диаметр (мм) трубопровода и протяженностьлинейного объекта (м)", Industries.GasSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Сметная стоимость работ, тыс. руб.", Industries.GasSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+
+    //    documentType = new DocumentType("Срок разработки проектной документации, месяцев", Industries.GasSupply, Roles.Designer);
+    //    DocumentDB.AddDocumentTypeToDataBase(documentType);
+    //}
+}
