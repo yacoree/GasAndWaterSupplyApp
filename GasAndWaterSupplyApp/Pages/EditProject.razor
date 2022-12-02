@@ -24,7 +24,7 @@
             <option value="@i.Login">@((i as Developer).Name)</option>
         }
     </select>
-
+    <br>
     <button class="btn btn-primary" @onclick="RegistrationClick">Sign up</button>
 
     <table class="table">
@@ -32,24 +32,21 @@
             <tr>
                 <th>Name</th>
                 <th>File</th>
-                <th>Approved</th>
-                <th>NEApproved</th>
+                <th>Accept</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var i in singletonUserService.GetProject().Documents)
             {
                 <tr>
-                    <td>@i.Type.Title</td>@*
-                    <td>@DocumentDB.FindFile(i.FileId)</td>
-                    <td><a href='file/{@DocumentDB.FindFile(i.FileId)}'>@i.FileId</a></td>*@
+                    <td>@i.Type.Title</td>
                     <td>@i.FileId</td>
-                    <td><button></button></td>
-                    <td><button></button></td>
+                    <input type="checkbox" @bind-value="i.Approved"></input>
                 </tr>
             }
         </tbody>
     </table>
+    <button class="btn btn-primary" @onclick="Save">Save</button>
 }
 else
 {
@@ -59,6 +56,7 @@ else
                 <th>Name</th>
                 <th>File</th>
                 <th>Approved</th>
+                <th>Send</th>
             </tr>
         </thead>
         <tbody>
@@ -72,7 +70,15 @@ else
                             <InputFile OnChange="@LoadFiles"/>
                             @*<input type="file" @bind-value="@file">*@
                         </td>
-                        <button class="btn btn-primary" @onclick="@(() => SaveDocument(i))">Send</button>
+                        @if (i.Approved)
+                        {
+                            <td class="bg-success">Approved</td>
+                        }
+                        else
+                        {
+                            <td >Rejected</td>
+                        }
+                        <button class="btn btn-primary" @onclick="@(() => SaveDocument(i))">Send file</button>
                     </tr>
                 }
             }
@@ -117,15 +123,16 @@ else
     {
         currentUser = singletonUserService.GetUser();
     }
+
     private void RegistrationClick()
     {
-        var pp = singletonUserService.GetProject();
+        var newProject = singletonUserService.GetProject();
         User deigner = UsersDB.FindUserByLogin(des);
         User developer = UsersDB.FindUserByLogin(dev);
-        if (deigner != null) pp.Designer = (Designer)deigner;
-        if (developer != null) pp.Developer = (Developer)developer;
-        ProjectDB.ReplaceProject(pp.Name, pp);
-        singletonUserService.SetProject(pp);
+        if (deigner != null) newProject.Designer = (Designer)deigner;
+        if (developer != null) newProject.Developer = (Developer)developer;
+        ProjectDB.ReplaceProject(newProject.Name, newProject);
+        singletonUserService.SetProject(newProject);
 
     }
 
@@ -135,6 +142,13 @@ else
         DocumentDB.AddDocumentToDataBase(document);
         ProjectDB.ReplaceProject(singletonUserService.GetProject().Name, singletonUserService.GetProject());
         file = string.Empty;
+    }
 
+    private void Save()
+    {
+        var newProject = singletonUserService.GetProject();
+        ProjectDB.ReplaceProject(newProject.Name, newProject);
+        singletonUserService.SetProject(newProject);
+        //ProjectDB.ReplaceProject(singletonUserService.GetProject().Name, singletonUserService.GetProject());
     }
 }

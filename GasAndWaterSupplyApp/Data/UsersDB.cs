@@ -5,7 +5,7 @@ namespace GasAndWaterSupplyApp.Data
 {
     public class UsersDB
     {
-        static string dataBaseName = "GasUsersBase";
+        static string dataBaseName = "UsersBase";
         static string userCollectionName = "Users";
         static MongoClient client;
         static IMongoDatabase database;

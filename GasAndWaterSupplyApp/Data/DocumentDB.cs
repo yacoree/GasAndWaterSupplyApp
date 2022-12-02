@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
+using System.IO;
 
 namespace GasAndWaterSupplyApp.Data
 {
@@ -60,14 +61,16 @@ namespace GasAndWaterSupplyApp.Data
             return documentTypeCollection.Find(x => x.Industry == industries).ToList();
         }
 
-        //public static GridFSFileInfo FindFile(string id)
-        //{
-        //    fileGridFSBucket.DownloadToStream(new ObjectId(id));
-        //    var filter = Builders<GridFSFileInfo>.Filter.Eq(info => info.Id, new ObjectId(id));
-        //    var fileInfos = fileGridFSBucket.Find(filter);
-        //    var fileInfo = fileInfos.FirstOrDefault();
-        //    return fileInfo;
-        //}
+        public static void FindFile(string id, string path)
+        {
+            using Stream fs = File.OpenWrite(path);
+            fileGridFSBucket.DownloadToStream(new ObjectId(id), fs);
+            //var filter = Builders<GridFSFileInfo>.Filter.Eq(info => info.Id, new ObjectId(id));
+            //var fileInfos = fileGridFSBucket.Find(filter);
+            //var fileInfo = fileInfos.FirstOrDefault();
+            //return fileInfo;
+        }
+
         //public static List<Document> FindDocuments(User user)
         //{
         //    return documentCollection.Find(x => x.Cust).ToList();

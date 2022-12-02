@@ -32,12 +32,20 @@
             KPP = kPP;
         }
 
-        public Designer(User user) : base(user.Login, user.Password, user.Email, user.Telephone) { }
+        public Designer(User user) : base(user.Login, user.Password, user.Email, user.Telephone) 
+        {
+            Name = string.Empty;
+            KPP = string.Empty;
+            INN = string.Empty;
+            OGRN = string.Empty;
+            Director = string.Empty;
+            ChiefProjectEngineer = string.Empty;
+        }
 
         public override bool AllFieldsAreFilled()
         {
-            return (Name != String.Empty && KPP != String.Empty && INN != String.Empty && 
-                OGRN != String.Empty && Director != String.Empty && ChiefProjectEngineer != String.Empty);
+            return (Name != string.Empty && KPP != string.Empty && INN != string.Empty && 
+                OGRN != string.Empty && Director != string.Empty && ChiefProjectEngineer != string.Empty);
         }
     }
 }

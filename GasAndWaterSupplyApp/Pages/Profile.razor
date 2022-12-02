@@ -5,7 +5,9 @@
 @inject SingletonUserService singletonUserService
 
 <h3>Profile</h3>
-
+<label>@error</label>
+@if (singletonUserService.GetUser() != null)
+{
 <div>
     @*<label>@error</label>*@
     <form>
@@ -20,12 +22,24 @@
             }
         }
 
-        @if (UserMaker.dictionary[singletonUserService.GetUser().GetType().Name] == Roles.Customer)
+        @if (UserMaker.dictionary.ContainsKey(singletonUserService.GetUser().GetType().Name))
         {
-            foreach (var i in Enum.GetValues(typeof(Industries)))
+            if (UserMaker.dictionary[singletonUserService.GetUser().GetType().Name] == Roles.Customer)
             {
-                <input class="form-check-input" type="radio" name="role" @onchange="@(() => UpdateIndustries((Industries)i))" checked="checked">
-                <b style="margin-right: 25px;">@i</b>
+                <label>Choose your role</label>
+                <br>
+                <select @bind="customerIndustry">
+                    @foreach (var i in (Enum.GetValues(typeof(Industries))))
+                    {
+                        <option value="@((Industries)i)">@i</option>
+                    }
+                </select>
+                @*foreach (var i in Enum.GetValues(typeof(Industries)))
+                {
+                    <input class="form-check-input" type="radio" name="role" @onchange="@(() => UpdateIndustries((Industries)i))" checked="checked">
+                    <b style="margin-right: 25px;">@i</b>
+                }*@
+
             }
         }
 
@@ -34,6 +48,7 @@
     <button class="btn btn-primary" @onclick="SaveChanges">Save changes</button>
     <button class="btn btn-primary" @onclick="LogOut">Log out</button>
 </div>
+}
             
 
 @code {
@@ -48,17 +63,17 @@
     private void SaveChanges()
     {
         string field = string.Empty;
-        foreach (var i in stringFieldValues)
-        {
-            if (i.Value == string.Empty) 
-            {
-                error = $"All fields ";
-                return;
-            }
-        }
-        if (stringFieldValues["Login"] != currentUser.Login && UsersDB.FindUserByLogin(stringFieldValues["Login"]) != null) field = "Login";
-        else if (stringFieldValues["Telephone"] != currentUser.Login && UsersDB.FindUserByLogin(stringFieldValues["Telephone"]) != null) field = "Telephone";
-        else if (stringFieldValues["Email"] != currentUser.Login && UsersDB.FindUserByLogin(stringFieldValues["Email"]) != null) field = "Email";
+        //foreach (var i in stringFieldValues)
+        //{
+        //    if (i.Value == string.Empty) 
+        //    {
+        //        error = $"All fields must be filled in";
+        //        return;
+        //    }
+        //}
+        if (UsersDB.FindUserByLogin(stringFieldValues["Login"]) != null) field = "Login";
+        else if (UsersDB.FindUserByTelephone(stringFieldValues["Telephone"]) != null) field = "Telephone";
+        else if (UsersDB.FindUserByEmail(stringFieldValues["Email"]) != null) field = "Email";
         else 
         {
             User newUser;
@@ -84,18 +99,25 @@
             }
             UsersDB.ReplaceUser(currentUser.Login, newUser);
             singletonUserService.SetUser(newUser);
+            return;
         }
+        error = $"This {field} already used"; 
     }
 
     private void LogOut()
     {
         NavigationManager.NavigateTo("authorization");
-        singletonUserService.SetUser(new User());
-        
+        singletonUserService.SetUser(null);
+
     }
 
     protected override async Task OnInitializedAsync()
     {
+        if (singletonUserService.GetUser() == null)
+        {
+            NavigationManager.NavigateTo("authorization");
+            return;
+        }
         switch (UserMaker.dictionary[singletonUserService.GetUser().GetType().Name])
         {
             case Roles.Customer:

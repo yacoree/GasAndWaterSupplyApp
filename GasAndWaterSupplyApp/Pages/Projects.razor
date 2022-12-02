@@ -5,6 +5,11 @@
 @inject SingletonUserService singletonUserService
 
 <h3>Projects</h3>
+@if (singletonUserService.GetUser() == null)
+{
+    <label class="alert-danger">You must authorizatoin</label>
+    return;
+}
 @if (singletonUserService.GetUser().AllFieldsAreFilled())
 {
     @if (currentUser is Customer)
@@ -21,16 +26,18 @@
         <div @onclick="@(() => SelectProject(i))">
             <h4>@i.Name</h4>
             <h5>Customer: @i.Customer.FName @i.Customer.LName</h5>
-            <h5> Designer: </h5>
+            <h5> Designer:
             @if (i.Designer != null) 
             {
-                <h5> { i.Designer.Name; }</h5>
+                @i.Designer.Name;
             }
-            <h5> Developer: </h5>
+            </h5>
+            <h5> Developer: 
             @if (i.Developer != null)
             {
-                <h5> { i.Developer.Name; }</h5>
+                @i.Developer.Name;
             }
+            </h5>
         </div>
     }
 }
@@ -48,8 +55,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        currentUser = singletonUserService.GetUser();
-        UserProjects = ProjectDB.FindAllProjectsByUser(currentUser);
+        if (singletonUserService.GetUser() != null)
+        {
+            currentUser = singletonUserService.GetUser();
+            UserProjects = ProjectDB.FindAllProjectsByUser(currentUser);
+        }
     }
 
     private void SelectProject(Project project)

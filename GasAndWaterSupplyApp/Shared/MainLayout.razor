@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@using GasAndWaterSupplyApp.Data
+@inject SingletonUserService singletonUserService
 
 <PageTitle>GasAndWaterSupplyApp</PageTitle>
 
@@ -9,6 +11,21 @@
 
     <main>
         <div class="top-row px-4">
+            @if (singletonUserService.GetUser() != null)
+            {
+                if (@singletonUserService.GetUser() is Customer)
+                {
+                    <a href="profile">@(((Customer)singletonUserService.GetUser()).FName) @(((Customer)singletonUserService.GetUser()).LName)</a>
+                }
+                else if (@singletonUserService.GetUser() is Designer)
+                {
+                    <a href="profile">@(((Designer)singletonUserService.GetUser()).Name)</a>
+                }
+                else if (@singletonUserService.GetUser() is Developer)
+                {
+                    <a href="profile">@(((Developer)singletonUserService.GetUser()).Name)</a>
+                }
+            }
             @*<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>*@
         </div>
 

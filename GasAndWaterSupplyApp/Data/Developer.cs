@@ -31,12 +31,20 @@
             INN = iNN;
             KPP = kPP;
         }
-        public Developer(User user) : base(user.Login, user.Password, user.Email, user.Telephone) { }
+        public Developer(User user) : base(user.Login, user.Password, user.Email, user.Telephone) 
+        {
+            Name = string.Empty;
+            KPP = string.Empty;
+            INN = string.Empty;
+            OGRN = string.Empty;
+            Adress = string.Empty;
+            HeadOfExecutiveCommitteeOfRT = string.Empty;
+        }
 
         public override bool AllFieldsAreFilled()
         {
-            return (Name != String.Empty && KPP != String.Empty && INN != String.Empty && 
-                OGRN != String.Empty && Adress != String.Empty && HeadOfExecutiveCommitteeOfRT != String.Empty);
+            return (Name != string.Empty && KPP != string.Empty && INN != string.Empty && 
+                OGRN != string.Empty && Adress != string.Empty && HeadOfExecutiveCommitteeOfRT != string.Empty);
         }
     }
 }

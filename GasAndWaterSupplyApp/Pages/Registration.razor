@@ -69,13 +69,13 @@
                     switch(role)
                     {
                         case Roles.Customer:
-                            user = new Customer(user);
+                            user = new Customer (user);
                             break;
                         case Roles.Developer:
-                            user = new Developer(user);
+                            user = new Developer (user);
                             break;
                         case Roles.Designer: 
-                            user = new Designer(user);
+                            user = new Designer (user);
                             break;
                     }
                     UsersDB.AddUserToDataBase(user);

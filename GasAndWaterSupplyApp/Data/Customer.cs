@@ -28,11 +28,14 @@
         public Customer(User user) : base(user.Login, user.Password, user.Email, user.Telephone)
         {
             Department = Industries.WaterSupply;
+            Patronymic = string.Empty;
+            LName = string.Empty;
+            FName = string.Empty;
         }
 
         public override bool AllFieldsAreFilled()
         {
-            return (Patronymic != String.Empty && LName != String.Empty && FName != String.Empty);
+            return (Patronymic != string.Empty && LName != string.Empty && FName != string.Empty);
         }
     }
 }
